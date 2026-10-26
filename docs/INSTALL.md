@@ -28,7 +28,7 @@ python3 scripts/build.py
 /plugin install <plugin>@tomskills
 ```
 
-Plugins: `campaign-analyst`, `goal-disposition-import`, `research-company`, `account-ops-notion`. Run `/plugin marketplace update tomskills` to pull new versions.
+Plugins: `campaign-analyst`, `goal-disposition-import`, `research-company`, `account-ops-notion`, `market-research-reports`, `prompt-engineering-expert`. Run `/plugin marketplace update tomskills` to pull new versions.
 
 Marketplace installs come straight from GitHub, so personalized skills still have their `{{PLACEHOLDER}}` tokens. They ask for the values on first run. To skip that, use Option B with a built copy.
 
@@ -67,7 +67,7 @@ npx skills add TomsTools11/tomskills
 Things to check on a non-Claude agent:
 
 - Skills that call connectors (`notion-fetch`, Close `lead_search`, Fathom, Superhuman) need equivalent MCP servers in that agent, under similar tool names.
-- `scripts/` need Python. `research-company` needs `pip install reportlab`, and `disposition-import` needs `pandas`.
+- `scripts/` need Python. `research-company` needs `pip install reportlab`, `disposition-import` needs `pandas`, and `market-research-reports` needs `matplotlib`, `pypdf`, and a TeX Live install with `xelatex`.
 
 ## Chat tools without skill support (ChatGPT GPTs, Gemini Gems, Claude Projects)
 

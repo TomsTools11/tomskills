@@ -247,10 +247,12 @@ def main() -> int:
     if not KNOWN_KEYS:
         errors.append(f"{rel(EXAMPLE_PROFILE)}: missing or empty")
     for s in skills:
-        for f in s.parent.rglob("*.md"):
-            for key in set(PLACEHOLDER_RE.findall(f.read_text())) - KNOWN_KEYS:
-                if s.parent.parent.name == "skills":  # standalone skills only use profile keys
-                    errors.append(f"{rel(f)}: placeholder {{{{{key}}}}} is not declared in {rel(EXAMPLE_PROFILE)}")
+        # Personalized skills (those with a config block) may only use declared profile keys.
+        # Elsewhere {{...}} can be legitimate content, e.g. a prompt-template variable.
+        if "<!-- config:start -->" not in s.read_text():
+            continue
+        for key in set(PLACEHOLDER_RE.findall(s.read_text())) - KNOWN_KEYS:
+            errors.append(f"{rel(s)}: placeholder {{{{{key}}}}} is not declared in {rel(EXAMPLE_PROFILE)}")
     profile = {} if args.check else load_profile(args.profile)
 
     if not errors and not args.check:

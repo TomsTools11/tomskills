@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Tom Panos's Claude skills and plugins for insurance performance marketing, GOAL Platform account management, and B2B research.",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
@@ -15,7 +15,13 @@
       "description": "Diagnose GOAL Platform campaign performance, right-price sources from RightPricing data, and build client-facing account review reports.",
       "version": "0.5.1",
       "category": "marketing",
-      "keywords": ["goal", "insurance", "bidding", "campaign-analysis", "reporting"]
+      "keywords": [
+        "goal",
+        "insurance",
+        "bidding",
+        "campaign-analysis",
+        "reporting"
+      ]
     },
     {
       "name": "goal-disposition-import",
@@ -23,7 +29,13 @@
       "description": "Transform raw CRM disposition exports into GOAL-ready CSV files for Conversion Bulk Import.",
       "version": "0.2.0",
       "category": "data",
-      "keywords": ["goal", "disposition", "crm", "csv", "import"]
+      "keywords": [
+        "goal",
+        "disposition",
+        "crm",
+        "csv",
+        "import"
+      ]
     },
     {
       "name": "research-company",
@@ -32,18 +44,72 @@
       "description": "B2B company research that produces a professionally formatted PDF account report from a company URL.",
       "version": "1.0.0",
       "category": "research",
-      "keywords": ["research", "account-profile", "pdf", "sales"],
-      "skills": ["./skills/research-company"]
+      "keywords": [
+        "research",
+        "account-profile",
+        "pdf",
+        "sales"
+      ],
+      "skills": [
+        "./skills/research-company"
+      ]
     },
     {
       "name": "account-ops-notion",
       "source": "./",
       "strict": false,
-      "description": "Notion-based account management: the weekday Daily Account Brief and per-account Recent Updates callouts. Personalize with config/profile.yaml.",
-      "version": "1.0.0",
+      "description": "Notion-based account management: the weekday Daily Account Brief, per-account Recent Updates callouts, and review-meeting recap notes with tasks. Personalize with config/profile.yaml.",
+      "version": "1.1.0",
       "category": "productivity",
-      "keywords": ["notion", "account-management", "daily-brief", "fathom", "superhuman", "close"],
-      "skills": ["./skills/daily-account-brief", "./skills/account-recent-updates"]
+      "keywords": [
+        "notion",
+        "account-management",
+        "daily-brief",
+        "fathom",
+        "superhuman",
+        "close",
+        "meeting-recap"
+      ],
+      "skills": [
+        "./skills/daily-account-brief",
+        "./skills/account-recent-updates",
+        "./skills/review-recap-note"
+      ]
+    },
+    {
+      "name": "market-research-reports",
+      "source": "./",
+      "strict": false,
+      "description": "Consulting-style market research reports (TAM/SAM/SOM, competitive landscape, Porter's Five Forces, PESTLE, SWOT) compiled to PDF with LaTeX and sourced charts.",
+      "version": "1.0.0",
+      "category": "research",
+      "keywords": [
+        "market-research",
+        "market-sizing",
+        "latex",
+        "pdf",
+        "competitive-analysis"
+      ],
+      "skills": [
+        "./skills/market-research-reports"
+      ]
+    },
+    {
+      "name": "prompt-engineering-expert",
+      "source": "./",
+      "strict": false,
+      "description": "Write, review, and debug prompts for Claude (system prompts, agent prompts, CLAUDE.md files) using Anthropic's current best practices, with model-specific tuning.",
+      "version": "1.0.0",
+      "category": "development",
+      "keywords": [
+        "prompt-engineering",
+        "system-prompts",
+        "claude",
+        "agents"
+      ],
+      "skills": [
+        "./skills/prompt-engineering-expert"
+      ]
     }
   ]
 }
