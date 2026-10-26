@@ -1,0 +1,33 @@
+[
+  {
+    "skills": ["market-research-reports"],
+    "query": "Write a market research report on the US pet insurance market for a carrier deciding whether to launch a direct-to-consumer product.",
+    "files": [],
+    "expected_behavior": [
+      "Creates sources/research_log.md with a URL, publisher, and data year for every market-size, CAGR, and share figure",
+      "Cites at least two sources for market size and states the range when they differ",
+      "Renders charts only from data/charts.json via make_charts.py; no chart contains numbers absent from the log",
+      "check_report.py prints PASS with at least 50 pages",
+      "Recommendations address the launch decision named in the request"
+    ]
+  },
+  {
+    "skills": ["market-research-reports"],
+    "query": "I need a 25-page market sizing and competitive landscape study on agricultural drone spraying services in Brazil.",
+    "files": [],
+    "expected_behavior": [
+      "Uses 25 as the page minimum (check_report.py --min-pages 25) instead of 50",
+      "States data gaps for thin chapters rather than padding them",
+      "Deletes figure environments for charts that were not rendered",
+      "Sets \\baseyear to the latest year with actual data"
+    ]
+  },
+  {
+    "skills": ["market-research-reports"],
+    "query": "Give me a quick read on whether the EV charging market is still growing.",
+    "files": [],
+    "expected_behavior": [
+      "Does not start the 50-page report workflow; answers briefly or asks whether a full report is wanted"
+    ]
+  }
+]

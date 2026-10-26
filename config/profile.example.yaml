@@ -14,6 +14,7 @@ WORK_EMAIL:                 # work address used by Fathom, Slack, and Close
 WORK_HANDLE:                # Slack handle / email prefix, e.g. arivera
 TIMEZONE:                   # IANA zone, e.g. America/Chicago
 BACKUP_AM_NAME:             # teammate who covers your accounts
+ACCOUNTS_FOLDER:            # local folder with one subfolder per client, e.g. ~/Clients
 
 # --- Notion (IDs are the part after collection:// or the page ID) ---
 NOTION_TASKS_DS:

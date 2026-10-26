@@ -11,6 +11,9 @@ Claude skills and plugins I use every day for insurance performance marketing, G
 | [research-company](skills/research-company) | Skill | Researches a company from its URL and outputs a styled PDF account report | Web search/fetch, Python + `reportlab` |
 | [daily-account-brief](skills/daily-account-brief) | Skill, personalized | Weekday morning brief in Notion: confirms finished tasks, scans email/Fathom/Slack, creates tasks, builds the Daily Brief note | Notion, Superhuman, Fathom, Slack, Close |
 | [account-recent-updates](skills/account-recent-updates) | Skill, personalized | Writes or refreshes the "Recent Updates" status callout on a Notion account page | Notion, Close, Superhuman, Fathom |
+| [review-recap-note](skills/review-recap-note) | Skill, personalized | Turns the latest client review call into a Notion recap note plus tasks grouped by campaign, every number verified against the transcript | Notion, Fathom, local account folder |
+| [market-research-reports](skills/market-research-reports) | Skill | Consulting-style market research report (50+ pages by default) with sourced market sizing, competitive landscape, and frameworks, compiled to PDF | Web search, `xelatex` + `bibtex`, Python + `matplotlib` + `pypdf` |
+| [prompt-engineering-expert](skills/prompt-engineering-expert) | Skill | Writes, reviews, and debugs prompts for Claude (system prompts, agent prompts, CLAUDE.md), tuned to the target model | Nothing extra |
 
 **Personalized** skills contain `{{PLACEHOLDER}}` tokens (your name, emails, Notion database IDs, Slack channel). See [Personalizing](#personalizing). If you don't fill them, the skill asks for the values the first time it runs.
 
@@ -26,6 +29,8 @@ The fastest route for each platform is below. [docs/INSTALL.md](docs/INSTALL.md)
 /plugin install goal-disposition-import@tomskills
 /plugin install research-company@tomskills
 /plugin install account-ops-notion@tomskills
+/plugin install market-research-reports@tomskills
+/plugin install prompt-engineering-expert@tomskills
 ```
 
 **Claude.ai / Claude Desktop / Cowork** (upload a zip):
