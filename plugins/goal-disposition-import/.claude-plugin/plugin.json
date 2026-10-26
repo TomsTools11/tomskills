@@ -1,0 +1,9 @@
+{
+  "name": "goal-disposition-import",
+  "version": "0.2.0",
+  "description": "Transform raw CRM disposition exports into GOAL-ready CSV files for bulk import",
+  "author": {
+    "name": "Tom Panos"
+  },
+  "keywords": ["goal", "disposition", "import", "csv", "insurance", "crm"]
+}

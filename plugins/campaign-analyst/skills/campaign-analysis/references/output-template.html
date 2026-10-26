@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{CLIENT_NAME}} — Campaign Performance Analysis</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;400;500;600;700;800;900&display=swap');
+  /* ===== RESET & BASE ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --goal-blue: #057BE5;
+    --goal-blue-light: #E8F4FD;
+    --goal-blue-dark: #0C6EC5;
+    --green: #2BBF7A;
+    --green-bg: #F0FDF4;
+    --amber: #F0A93B;
+    --amber-bg: #FFFBEB;
+    --red: #E5484D;
+    --red-bg: #FEF2F2;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6A7482;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #2B3442;
+    --gray-900: #0F1B2D;
+    --radius: 8px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--gray-800);
+    background: var(--gray-50);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== LAYOUT ===== */
+  .report-container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  /* ===== HEADER ===== */
+  .report-header {
+    background: linear-gradient(135deg, #00172D 0%, #001020 100%);
+    color: white;
+    border-radius: var(--radius);
+    padding: 40px 36px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow-md);
+  }
+  .report-header .logo-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .report-header .logo-dot {
+    width: 10px; height: 10px;
+    background: white;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .report-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+  .report-header .subtitle {
+    font-size: 15px;
+    opacity: 0.8;
+    font-weight: 400;
+  }
+  .report-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .report-meta .meta-item {
+    font-size: 13px;
+    opacity: 0.75;
+  }
+  .report-meta .meta-item strong {
+    opacity: 1;
+    font-weight: 600;
+  }
+
+  /* ===== SECTIONS ===== */
+  .section {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-number {
+    background: var(--goal-blue);
+    color: white;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gray-900);
+  }
+  .section-body {
+    padding: 20px 24px 24px;
+  }
+
+  /* ===== EXECUTIVE SUMMARY ===== */
+  .exec-summary {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--gray-700);
+  }
+  .root-cause-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 12px;
+  }
+  .root-cause-badge.competitive { background: var(--red-bg); color: var(--red); }
+  .root-cause-badge.demand { background: var(--amber-bg); color: var(--amber); }
+  .root-cause-badge.budget { background: var(--amber-bg); color: var(--amber); }
+  .root-cause-badge.mixed { background: var(--red-bg); color: var(--red); }
+
+  /* ===== TABLES ===== */
+  .data-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  table.data-table thead th {
+    background: var(--gray-50);
+    color: var(--gray-600);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 11px;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 2px solid var(--gray-200);
+    white-space: nowrap;
+  }
+  table.data-table tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: middle;
+  }
+  table.data-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  table.data-table tbody tr:hover {
+    background: var(--gray-50);
+  }
+  .text-right { text-align: right; }
+  .text-center { text-align: center; }
+  .font-mono { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 12px; }
+
+  /* ===== TREND INDICATORS ===== */
+  .trend-up { color: var(--green); }
+  .trend-down { color: var(--red); }
+  .trend-flat { color: var(--gray-400); }
+  .trend-arrow { font-size: 11px; margin-right: 2px; }
+
+  /* ===== STATUS BADGES ===== */
+  .status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .status-badge.action { background: var(--red-bg); color: var(--red); }
+  .status-badge.investigate { background: var(--amber-bg); color: var(--amber); }
+  .status-badge.performing { background: var(--green-bg); color: var(--green); }
+  .status-badge.hold { background: var(--gray-100); color: var(--gray-500); }
+
+  /* ===== METRIC CARDS ===== */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .metric-card {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .metric-card .metric-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray-500);
+    margin-bottom: 4px;
+  }
+  .metric-card .metric-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gray-900);
+  }
+  .metric-card .metric-change {
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .metric-card.highlight {
+    border-color: var(--goal-blue);
+    background: var(--goal-blue-light);
+  }
+  .metric-card.highlight .metric-label {
+    color: var(--goal-blue-dark);
+  }
+  .metric-card.alert {
+    border-color: var(--red);
+    background: var(--red-bg);
+  }
+  .metric-card.alert .metric-label {
+    color: var(--red);
+  }
+
+  /* ===== RECOMMENDATION CARDS ===== */
+  .rec-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .rec-card {
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    border-left: 4px solid var(--gray-300);
+  }
+  .rec-card.raise { border-left-color: var(--goal-blue); }
+  .rec-card.reduce { border-left-color: var(--green); }
+  .rec-card.investigate { border-left-color: var(--amber); }
+  .rec-card.hold { border-left-color: var(--gray-300); }
+
+  .rec-card .rec-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .rec-card .rec-source {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--gray-900);
+  }
+  .rec-card .rec-action {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .rec-card .rec-detail {
+    font-size: 13px;
+    color: var(--gray-600);
+    line-height: 1.6;
+  }
+  .rec-card .rec-bid-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--goal-blue-light);
+    color: var(--goal-blue-dark);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 8px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  }
+  .rec-card .rec-bid-change .arrow { font-size: 16px; }
+  .rec-card .rec-bid-change .bid-label {
+    font-weight: 400;
+    color: var(--gray-500);
+    margin-right: 4px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+  }
+
+  /* ===== MARKET POSITION MAP ===== */
+  .position-bar-container {
+    margin-bottom: 16px;
+  }
+  .position-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .position-bar-label .source-name { font-weight: 600; color: var(--gray-800); }
+  .position-bar-label .bid-value { font-family: 'SF Mono', monospace; font-size: 12px; color: var(--gray-500); }
+  .position-bar-track {
+    height: 24px;
+    background: var(--gray-100);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .position-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+  .position-bar-fill.above-1st { background: var(--green); }
+  .position-bar-fill.between-1-2 { background: var(--goal-blue); }
+  .position-bar-fill.between-2-3 { background: var(--amber); }
+  .position-bar-fill.below-3rd { background: var(--red); }
+
+  .position-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-100);
+    font-size: 12px;
+    color: var(--gray-500);
+  }
+  .position-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .position-legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 3px;
+  }
+
+  /* ===== METHODOLOGY ===== */
+  .methodology-text {
+    font-size: 13px;
+    color: var(--gray-500);
+    line-height: 1.75;
+  }
+  .methodology-text strong {
+    color: var(--gray-600);
+  }
+
+  /* ===== FOOTER ===== */
+  .report-footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--gray-400);
+    font-size: 12px;
+    border-top: 1px solid var(--gray-200);
+    margin-top: 16px;
+  }
+  .report-footer a {
+    color: var(--goal-blue);
+    text-decoration: none;
+  }
+
+  /* ===== DATA GAPS CALLOUT ===== */
+  .callout {
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 10px;
+  }
+  .callout.info {
+    background: var(--goal-blue-light);
+    color: var(--goal-blue-dark);
+    border: 1px solid rgba(4, 121, 223, 0.2);
+  }
+  .callout.warning {
+    background: var(--amber-bg);
+    color: #9A6B17;
+    border: 1px solid rgba(217, 119, 6, 0.2);
+  }
+  .callout.success {
+    background: var(--green-bg);
+    color: #157A4A;
+    border: 1px solid rgba(22, 163, 74, 0.2);
+  }
+  .callout-icon { flex-shrink: 0; font-size: 16px; }
+
+  /* ===== PRINT ===== */
+  @media print {
+    body { background: white; font-size: 12px; }
+    .report-container { padding: 0; max-width: 100%; }
+    .report-header { break-after: avoid; }
+    .section { box-shadow: none; border: 1px solid var(--gray-200); break-inside: avoid; }
+    .metric-grid { grid-template-columns: repeat(4, 1fr); }
+    .no-print { display: none !important; }
+    @page { margin: 0.75in; }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    .report-header { padding: 28px 20px; }
+    .report-header h1 { font-size: 22px; }
+    .section-body { padding: 16px; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .report-meta { gap: 12px; }
+    .rec-card .rec-header { flex-direction: column; align-items: flex-start; }
+  }
+
+  .report-header .masthead-wordmark { height: 24px; width: auto; display: inline-block; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<div class="report-container">
+
+  <!-- ======== HEADER ======== -->
+  <header class="report-header">
+    <div class="logo-row">
+      <img class="masthead-wordmark" src="../assets/goal-wordmark-white.png" alt="GOAL">
+      Campaign Analysis
+    </div>
+    <h1>{{CLIENT_NAME}} Performance Report</h1>
+    <p class="subtitle">{{ANALYSIS_PERIOD}} · {{VERTICAL}} · {{STATE}}</p>
+    <div class="report-meta">
+      <div class="meta-item">Prepared <strong>{{DATE}}</strong></div>
+      <div class="meta-item">Account Manager <strong>{{ACCOUNT_MANAGER}}</strong></div>
+      <div class="meta-item">Account Age <strong>{{ACCOUNT_AGE}}</strong></div>
+    </div>
+  </header>
+
+  <!-- ======== 1. EXECUTIVE SUMMARY ======== -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">1</span>
+      <span class="section-title">Executive Summary</span>
+    </div>
+    <div class="section-body">
+      <p class="exec-summary">
+        {{EXECUTIVE_SUMMARY_TEXT}}
+        <!-- Example (no client name in body copy; no projected-recovery claims):
+        Over the trailing 6-month window, monthly lead volume declined 34% (from a baseline of
+        42 leads/month to a projected 28 this month). Win rate dropped from 18% to 11% while market
+        searches remained stable — the root cause classification is competitive positioning, not
+        demand decline. Source-level analysis identifies two high-opportunity sources where the
+        effective bid sits 40%+ below first-position RPC. The recommended multiplier increases
+        target these two sources.
+        -->
+      </p>
+      <div>
+        <span class="root-cause-badge {{ROOT_CAUSE_CLASS}}">
+          Root Cause: {{ROOT_CAUSE_LABEL}}
+        </span>
+        <!-- ROOT_CAUSE_CLASS: competitive | demand | budget | mixed -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== 2. KEY METRICS SNAPSHOT ======== -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">2</span>
+      <span class="section-title">Key Metrics Snapshot</span>
+    </div>
+    <div class="section-body">
+      <div class="metric-grid">
+        <!-- Repeat metric-card blocks. Use class="highlight" for key positive, class="alert" for critical -->
+        <div class="metric-card alert">
+          <div class="metric-label">Monthly Leads</div>
+          <div class="metric-value">{{LEADS_VALUE}}</div>
+          <div class="metric-change trend-down">{{LEADS_CHANGE}}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Win Rate</div>
+          <div class="metric-value">{{WIN_RATE_VALUE}}</div>
+          <div class="metric-change {{WIN_RATE_TREND_CLASS}}">{{WIN_RATE_CHANGE}}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Impression Share</div>
+          <div class="metric-value">{{IMP_SHARE_VALUE}}</div>
+          <div class="metric-change {{IMP_SHARE_TREND_CLASS}}">{{IMP_SHARE_CHANGE}}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Avg Bid</div>
+          <div class="metric-value">{{AVG_BID_VALUE}}</div>
+          <div class="metric-change {{AVG_BID_TREND_CLASS}}">{{AVG_BID_CHANGE}}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Monthly Cost</div>
+          <div class="metric-value">{{COST_VALUE}}</div>
+          <div class="metric-change {{COST_TREND_CLASS}}">{{COST_CHANGE}}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Sold CPA</div>
+          <div class="metric-value">{{CPA_VALUE}}</div>
+          <div class="metric-change {{CPA_TREND_CLASS}}">{{CPA_CHANGE}}</div>
+        </div>
+      </div>
+
+      <!-- Optional callout for partial-month projection -->
+      <!--
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <span>Current month values are projected from {{DAYS_ELAPSED}} days of data. Projections become reliable after 10+ days.</span>
+      </div>
+      -->
+    </div>
+  </div>
+
+  <!-- ======== 3. CAMPAIGN TREND DASHBOARD ======== -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">3</span>
+      <span class="section-title">Campaign Trend Dashboard</span>
+    </div>
+    <div class="section-body">
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th class="text-right">Searches</th>
+              <th class="text-right">Impressions</th>
+              <th class="text-right">Imp %</th>
+              <th class="text-right">Clicks</th>
+              <th class="text-right">Leads</th>
+              <th class="text-right">Cost</th>
+              <th class="text-right">Avg CPC</th>
+              <th class="text-right">Avg Bid</th>
+              <th class="text-right">Win Rate</th>
+              <th class="text-right">Sold</th>
+              <th class="text-right">Sold CPA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Repeat one <tr> per month. Mark projected rows with italic or an asterisk. -->
+            <!--
+            <tr>
+              <td>Jan 2025</td>
+              <td class="text-right font-mono">12,450</td>
+              <td class="text-right font-mono">2,118</td>
+              <td class="text-right font-mono">17.0%</td>
+              <td class="text-right font-mono">185</td>
+              <td class="text-right font-mono">42</td>
+              <td class="text-right font-mono">$3,145</td>
+              <td class="text-right font-mono">$17.00</td>
+              <td class="text-right font-mono">$18.50</td>
+              <td class="text-right font-mono">18.2%</td>
+              <td class="text-right font-mono">6</td>
+              <td class="text-right font-mono">$524</td>
+            </tr>
+            -->
+            <!-- === BASELINE ROW === -->
+            <!--
+            <tr style="background: var(--goal-blue-light); font-weight: 600;">
+              <td>Baseline Avg</td>
+              <td class="text-right font-mono">{{BASELINE_SEARCHES}}</td>
+              ...
+            </tr>
+            -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== 4. SOURCE PERFORMANCE MATRIX ======== -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">4</span>
+      <span class="section-title">Source Performance Matrix</span>
+    </div>
+    <div class="section-body">
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th class="text-right">Opps</th>
+              <th class="text-right">Bids</th>
+              <th class="text-right">Bid Rate</th>
+              <th class="text-right">Wins</th>
+              <th class="text-right">Win Rate</th>
+              <th class="text-right">Leads</th>
+              <th class="text-right">Multiplier</th>
+              <th class="text-right">Eff. Bid</th>
+              <th class="text-center">Classification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Repeat one <tr> per active source, ranked by Opportunities descending -->
+            <!--
+            <tr>
+              <td>QuoteWizard</td>
+              <td class="text-right font-mono">2,176</td>
+              <td class="text-right font-mono">456</td>
+              <td class="text-right font-mono">20.9%</td>
+              <td class="text-right font-mono">42</td>
+              <td class="text-right font-mono">9.2%</td>
+              <td class="text-right font-mono">18</td>
+              <td class="text-right font-mono">104%</td>
+              <td class="text-right font-mono">$19.24</td>
+              <td class="text-center"><span class="status-badge action">Win Rate ↓</span></td>
+            </tr>
+            -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Optional: Ad Group Cannibalization Warning -->
+      <!--
+      <div class="callout warning" style="margin-top: 16px;">
+        <span class="callout-icon">⚠️</span>
+        <span><strong>Ad Group Overlap Detected:</strong> Ad Group "CO State" and Ad Group "Denver Metro" have overlapping geographic targeting, which causes internal bid competition and suppresses bid rate.</span>
+      </div>
+      -->
+    </div>
+  </div>
+
+  <!-- ======== 5. MARKET POSITION MAP ======== -->
+  <!-- Include this section ONLY when RightPricing data is available -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">5</span>
+      <span class="section-title">Market Position Map</span>
+    </div>
+    <div class="section-body">
+      <!-- If no RightPricing data available, show this callout instead of bars -->
+      <!--
+      <div class="callout warning">
+        <span class="callout-icon">⚠️</span>
+        <span><strong>RightPricing data not provided.</strong> Market position mapping requires the trailing 7-day RightPricing report filtered by state and vertical. Recommendations are preliminary without this data — request from Periscope before finalizing.</span>
+      </div>
+      -->
+
+      <!-- Position bars — one per source with RightPricing comparison -->
+      <!--
+      <div class="position-bar-container">
+        <div class="position-bar-label">
+          <span class="source-name">QuoteWizard</span>
+          <span class="bid-value">$19.24 eff. bid vs $22.50 2nd RPC target</span>
+        </div>
+        <div class="position-bar-track">
+          <div class="position-bar-fill between-2-3" style="width: 72%;"></div>
+        </div>
+      </div>
+      -->
+
+      <div class="position-legend">
+        <div class="position-legend-item">
+          <div class="position-legend-dot" style="background: var(--green);"></div>
+          Above 1st RPC (overpaying)
+        </div>
+        <div class="position-legend-item">
+          <div class="position-legend-dot" style="background: var(--goal-blue);"></div>
+          1st–2nd RPC
+        </div>
+        <div class="position-legend-item">
+          <div class="position-legend-dot" style="background: var(--amber);"></div>
+          2nd–3rd RPC
+        </div>
+        <div class="position-legend-item">
+          <div class="position-legend-dot" style="background: var(--red);"></div>
+          Below 3rd RPC
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== 6. HOURLY PERFORMANCE ======== -->
+  <!-- Include this section ONLY when the by-hour export is provided. Procedure: schedule-optimization.md.
+       Hours are in AGENT LOCAL TIME (converted from the export's Pacific time), sorted by clock time.
+       Hours under 30 leads are merged into blocks. Contact rate = Contacted / Leads (never the export's Contacted CVR). -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">6</span>
+      <span class="section-title">Hourly Performance</span>
+    </div>
+    <div class="section-body">
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <span>{{HOURLY_PERIOD}} · Hours in {{AGENT_ZONE}} (converted from Pacific, {{OFFSET_NOTE}}). Schedule set in {{SCHEDULE_ZONE}}. Hours under 30 leads merged.</span>
+      </div>
+      <!-- If the export has no Contacted/Quote/Bound columns, drop the Contact Rate column and add:
+      <div class="callout warning"><span class="callout-icon">⚠️</span><span>The by-hour export has no outcome columns, so contact rate by hour is not available. Leads, calls, and spend by hour only.</span></div>
+      -->
+      <!-- If any hour shows Contacted or Quote above Leads, add:
+      <div class="callout warning"><span class="callout-icon">⚠️</span><span>Some outcomes are timestamped when logged, not when the lead arrived. Hourly contact and quote rates are directional.</span></div>
+      -->
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Hour ({{AGENT_ZONE_ABBR}})</th>
+              <th>Hour ({{SCHEDULE_ZONE_ABBR}})</th>
+              <th>Leads</th>
+              <th class="text-right">Calls</th>
+              <th class="text-right">Contact Rate</th>
+              <th class="text-right">Spend</th>
+              <th class="text-right">Schedule %</th>
+              <th class="text-center">Flag</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- One <tr> per hour or merged block, in clock order. Bar width = leads / max leads x 100.
+                 Drop the schedule-zone column when the two zones match. Example row (invented numbers): -->
+            <!--
+            <tr>
+              <td>9 AM</td>
+              <td>10 AM</td>
+              <td>
+                <div class="position-bar-track" style="height: 14px; min-width: 120px;">
+                  <div class="position-bar-fill between-1-2" style="width: 64%;"></div>
+                </div>
+                <span class="font-mono">118</span>
+              </td>
+              <td class="text-right font-mono">9</td>
+              <td class="text-right font-mono">31.4%</td>
+              <td class="text-right font-mono">$1,212</td>
+              <td class="text-right font-mono">100%</td>
+              <td class="text-center"><span class="status-badge performing">Above avg</span></td>
+            </tr>
+            -->
+            <!-- Flags: performing = above-average contact rate on 30+ leads; investigate = heavy spend at below-average
+                 contact rate; action = business hour set below 100% or blocked with leads in history; hold = thin or average. -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== 7. RECOMMENDATIONS ======== -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">7</span>
+      <span class="section-title">Recommendations</span>
+    </div>
+    <div class="section-body">
+      <div class="rec-list">
+
+        <!-- === BID ADJUSTMENT CARD — MULTIPLIER CHANGE === -->
+        <!--
+        <div class="rec-card raise">
+          <div class="rec-header">
+            <span class="rec-source">QuoteWizard</span>
+            <span class="status-badge action">Raise Multiplier</span>
+          </div>
+          <p class="rec-detail">
+            Win rate of 9.2% with 2,176 opportunities indicates consistent underbidding. Effective bid of $19.24
+            sits between 2nd and 3rd RPC ($18.00–$22.50). Raising to just above 2nd position ($22.50+) should significantly
+            improve win rate and capture strong volume at efficient pricing without overpaying for 1st position. Only this source shows a win rate problem
+            while others perform well, so a targeted multiplier adjustment is the right lever.
+          </p>
+          <div class="rec-bid-change">
+            <span class="bid-label">Multiplier:</span> 104% <span class="arrow">→</span> 143%
+            <span style="font-weight: 400; color: var(--gray-500); margin-left: 8px;">($19.24 → $26.46 eff.)</span>
+          </div>
+        </div>
+        -->
+
+        <!-- === BID ADJUSTMENT CARD — BASE BID CHANGE === -->
+        <!--
+        <div class="rec-card raise">
+          <div class="rec-header">
+            <span class="rec-source">All Sources (Base Bid)</span>
+            <span class="status-badge action">Raise Base Bid</span>
+          </div>
+          <p class="rec-detail">
+            Multiple sources simultaneously show win rate problems with similar shortfalls, indicating systemic
+            underbidding across the board. Current base bid of $18.50 is below the market floor for most sources.
+            A single base bid raise is simpler and achieves the needed lift across all active sources.
+          </p>
+          <div class="rec-bid-change">
+            <span class="bid-label">Base Bid:</span> $18.50 <span class="arrow">→</span> $22.00
+          </div>
+          <p class="rec-detail" style="margin-top: 8px; font-size: 12px; color: var(--gray-500);">
+            Impact on active sources: Source A eff. bid $18.50→$22.00 · Source B eff. bid $20.35→$24.20 · Source C eff. bid $16.65→$19.80
+          </p>
+        </div>
+        -->
+
+        <!-- === SCHEDULE ADJUSTMENT CARD (one per campaign) === -->
+        <!-- Hours in the schedule's zone, agent local time beside it when different. Ask the account manager first when an hour moves
+             more than 25%, an hour with leads goes to 0%, or a raised hour pushes a Home or Auto source past 1st RPC. -->
+        <!--
+        <div class="rec-card raise">
+          <div class="rec-header">
+            <span class="rec-source">Schedule: Home (TN), Mon to Fri</span>
+            <span class="status-badge action">Schedule Adjustment</span>
+          </div>
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <thead><tr><th>Hour (ET)</th><th>Hour (CT)</th><th class="text-right">Current</th><th class="text-right">Recommended</th><th class="text-right">Leads</th><th class="text-right">Contact Rate</th><th class="text-right">Spend</th><th>Why</th></tr></thead>
+              <tbody>
+                <tr><td>8 AM to 10 AM</td><td>7 AM to 9 AM</td><td class="text-right font-mono">100%</td><td class="text-right font-mono">115%</td><td class="text-right font-mono">142</td><td class="text-right font-mono">31%</td><td class="text-right font-mono">$1,240</td><td>9 points above the 22% campaign average</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="rec-detail" style="margin-top: 8px; font-size: 12px; color: var(--gray-500);">
+            Example, invented numbers. Last 60 days. Pacific +3 to Eastern, computed on the window's dates. Hourly effective bid at 115% stacks on the source multiplier and any campaign modifiers.
+          </p>
+        </div>
+        -->
+
+        <!-- === INVESTIGATION CARD === -->
+        <!--
+        <div class="rec-card investigate">
+          <div class="rec-header">
+            <span class="rec-source">MediaAlpha</span>
+            <span class="status-badge investigate">Investigate</span>
+          </div>
+          <p class="rec-detail">
+            Bid rate of 2.1% despite 1,834 opportunities. The source is barely entering auctions — raising the
+            bid (base or multiplier) will not fix this. Check targeting filters, ad group settings, and coverage type restrictions.
+            Contact GOAL product team if no filter issues are found.
+          </p>
+        </div>
+        -->
+
+        <!-- === HOLD CARD === -->
+        <!--
+        <div class="rec-card hold">
+          <div class="rec-header">
+            <span class="rec-source">EverQuote</span>
+            <span class="status-badge performing">Performing</span>
+          </div>
+          <p class="rec-detail">
+            Win rate of 34% with strong lead volume relative to opportunity pool. Effective bid above 1st RPC — well above the 2nd position target
+            — may be slightly overpaying but volume justifies the premium. Monitor for efficiency; no changes
+            recommended at this time.
+          </p>
+        </div>
+        -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== 8. METHODOLOGY ======== -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">8</span>
+      <span class="section-title">Methodology</span>
+    </div>
+    <div class="section-body">
+      <p class="methodology-text">
+        This analysis follows the GOAL Platform four-layer diagnostic framework.
+        <strong>Layer 1</strong> parses the client's stated problem and constraints.
+        <strong>Layer 2</strong> builds monthly trend tables from campaign CSVs to establish baselines and classify the root cause (competitive positioning, market demand decline, budget constraint, or mixed).
+        <strong>Layer 3</strong> drills into source-level data — filtering to active sources with opportunities, calculating effective bids, and classifying each source's problem type (bid rate, win rate, performing, or not bidding).
+        <strong>Layer 4</strong> calibrates recommendations against the trailing 7-day RightPricing report, mapping each source's effective bid to its market position and cross-referencing with the source problem type. When a bid increase is indicated, both base bid and source multiplier levers are evaluated using the Base Bid vs. Multiplier Decision Framework to determine the optimal adjustment.
+        All projections for incomplete months use the formula: (Actual Value / Days Elapsed) × Total Days in Month.
+        Target multipliers are calculated as: (Target RPC / Base Bid) × 100%. Target base bids are calculated as: Target RPC / (Source Multiplier / 100).
+        When a base bid change is recommended, the impact on all active sources is shown.
+        Recommendations are prioritized by Volume Impact Potential: Opportunities × (Target Bid Rate − Current Bid Rate) × Expected Win Rate.
+        <!-- Include when the Hourly Performance section is used: -->
+        <!-- Hourly figures come from the by-hour export, converted from Pacific time to the agent's local time using the dates in the window. Contact rate by hour is Contacted / Leads. Hours under 30 leads are merged into blocks, and schedule adjustments are ranked by leads affected. -->
+      </p>
+    </div>
+  </div>
+
+  <!-- ======== FOOTER ======== -->
+  <div class="report-footer">
+    GOAL Platform · Campaign Performance Analysis · Confidential<br>
+    Generated {{DATE}}
+  </div>
+
+</div>
+
+</body>
+</html>

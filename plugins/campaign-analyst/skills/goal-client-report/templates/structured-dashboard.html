@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>
+/* Theme: follows the viewer's system by default; the toggle saves an override
+   (shared by every report on this site). Sets data-theme on <html>. */
+(function(){var k='goal-theme',r=document.documentElement,m=window.matchMedia('(prefers-color-scheme: dark)');
+function saved(){try{var s=localStorage.getItem(k);return s==='light'||s==='dark'?s:null;}catch(e){return null;}}
+function sys(){return m.matches?'dark':'light';}
+r.setAttribute('data-theme',saved()||sys());
+var onSys=function(){if(!saved())r.setAttribute('data-theme',sys());};
+if(m.addEventListener)m.addEventListener('change',onSys);else if(m.addListener)m.addListener(onSys);
+window.goalToggleTheme=function(){var n=r.getAttribute('data-theme')==='dark'?'light':'dark';r.setAttribute('data-theme',n);
+try{if(n===sys())localStorage.removeItem(k);else localStorage.setItem(k,n);}catch(e){}};})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>[Agency Name] · [Campaign] Performance Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   GOAL tokens (new site). Light = default, dark follows the
+   viewer's system. Force a theme with data-theme="light|dark"
+   on .g; data-theme="system" follows prefers-color-scheme.
+   The theme toggle sets data-theme on <html>, which wins over .g.
+   Print always renders light.
+   ============================================================ */
+.g{
+  --ground:#f6f8fc; --surface:#ffffff; --surface-raised:#ebf0f9;
+  --border-subtle:#dbe2ec; --border-strong:#94a3b8;
+  --ink:#001020; --ink-soft:#334155; --ink-muted:#475569;
+  --brand:#057be5; --brand-text:#0569c4; --on-brand:#ffffff;
+  --brand-tint:rgba(5,123,229,.08); --brand-tint-strong:rgba(5,123,229,.12); --brand-border:rgba(5,123,229,.3);
+  --amber:#b45309; --amber-tint:rgba(180,83,9,.10); --success:#15803d;
+  --s1:#057be5; --s2:#0a3a6b; --s3:#b45309; --s4:#0f8f78; --s5:#64748b;
+  --glow:rgba(5,123,229,.08); --grid:rgba(15,23,42,.035);
+  --shadow-card:0 1px 2px 0 rgba(0,0,0,.05);
+  --glow-brand:0 0 28px -8px rgba(5,123,229,.45);
+  --logo-light:block; --logo-dark:none;
+}
+.g[data-theme="dark"],:root[data-theme="dark"] .g{
+  --ground:#080c10; --surface:#0d1117; --surface-raised:#151a1e;
+  --border-subtle:rgba(30,41,59,.5); --border-strong:#64748b;
+  --ink:#ffffff; --ink-soft:#cbd5e1; --ink-muted:#94a3b8;
+  --brand-text:#339fff;
+  --brand-tint:rgba(5,123,229,.10); --brand-tint-strong:rgba(5,123,229,.15);
+  --amber:#d97706; --amber-tint:rgba(217,119,6,.14); --success:#22c55e;
+  --s2:#9fd0ff; --s3:#d97706; --s4:#3beeca; --s5:#94a3b8;
+  --glow:rgba(5,123,229,.13); --grid:rgba(148,163,184,.05);
+  --shadow-card:0 25px 50px -12px rgba(0,0,0,.25);
+  --glow-brand:0 0 28px -8px rgba(5,123,229,.55);
+  --logo-light:none; --logo-dark:block;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]) .g[data-theme="system"]{
+    --ground:#080c10; --surface:#0d1117; --surface-raised:#151a1e;
+    --border-subtle:rgba(30,41,59,.5); --border-strong:#64748b;
+    --ink:#ffffff; --ink-soft:#cbd5e1; --ink-muted:#94a3b8;
+    --brand-text:#339fff;
+    --brand-tint:rgba(5,123,229,.10); --brand-tint-strong:rgba(5,123,229,.15);
+    --amber:#d97706; --amber-tint:rgba(217,119,6,.14); --success:#22c55e;
+    --s2:#9fd0ff; --s3:#d97706; --s4:#3beeca; --s5:#94a3b8;
+    --glow:rgba(5,123,229,.13); --grid:rgba(148,163,184,.05);
+    --shadow-card:0 25px 50px -12px rgba(0,0,0,.25);
+    --glow-brand:0 0 28px -8px rgba(5,123,229,.55);
+    --logo-light:none; --logo-dark:block;
+  }
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
+body{margin:0;}
+.g{font-family:'Outfit',system-ui,sans-serif;background:var(--ground);color:var(--ink-soft);line-height:1.5;min-height:100vh;}
+.g a:focus-visible{outline:2px solid var(--brand-text);outline-offset:2px;}
+.num-font,.g h1,.g h2{font-family:'Sora',system-ui,sans-serif;}
+
+.shell{max-width:1440px;margin:0 auto;display:flex;flex-wrap:wrap;min-height:100vh;}
+
+/* ---------- Sidebar ---------- */
+.side{flex:1 1 280px;background:var(--surface);border-right:1px solid var(--border-subtle);padding:36px 28px;display:flex;flex-direction:column;}
+.side .logo{height:28px;width:auto;align-self:flex-start;margin-bottom:44px;}
+.side .logo.on-light{display:var(--logo-light);} .side .logo.on-dark{display:var(--logo-dark);}
+.side .eb{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-text);}
+.side .rule{width:48px;height:3px;border-radius:9999px;background:linear-gradient(90deg,var(--brand),var(--amber));margin:12px 0 16px;}
+.side h1{font-size:28px;font-weight:800;color:var(--ink);line-height:1.1;letter-spacing:-.6px;margin-bottom:14px;}
+.side .who{font-size:14px;color:var(--ink-muted);line-height:1.65;}
+.side .who b{color:var(--ink);font-weight:600;}
+.side nav{margin-top:40px;display:flex;flex-direction:column;gap:2px;}
+.side nav a{font-size:14px;font-weight:500;color:var(--ink-muted);text-decoration:none;padding:10px 12px;border-radius:8px;display:flex;align-items:center;gap:12px;transition:background .15s,color .15s;}
+.side nav a:hover{background:var(--surface-raised);color:var(--ink);}
+.side nav a .ix{font-family:'Sora',system-ui,sans-serif;font-size:11px;font-weight:700;color:var(--brand-text);font-variant-numeric:tabular-nums;width:20px;}
+.side .foot{margin-top:auto;padding-top:24px;border-top:1px solid var(--border-subtle);font-size:12px;color:var(--ink-muted);line-height:1.6;}
+
+/* ---------- Main ---------- */
+.main{flex:999 1 560px;min-width:0;padding:44px 56px 64px;
+  background-image:
+    radial-gradient(640px 380px at 88% 0%, var(--glow), transparent 70%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:auto, 48px 48px, 48px 48px;}
+.block{margin-bottom:56px;scroll-margin-top:24px;}
+.bhead{display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;}
+.bhead .ix{font-family:'Sora',system-ui,sans-serif;font-size:12px;font-weight:700;color:var(--brand-text);font-variant-numeric:tabular-nums;background:var(--brand-tint-strong);padding:4px 11px;border-radius:9999px;margin-top:4px;}
+.bhead h2{font-size:24px;font-weight:800;color:var(--ink);letter-spacing:-.5px;line-height:1.3;}
+.bhead p{font-size:14px;color:var(--ink-muted);margin-top:2px;}
+
+/* ---------- Period strip ---------- */
+.strip{display:flex;flex-wrap:wrap;align-items:center;gap:10px 28px;padding:16px 22px;border:1px solid var(--border-subtle);border-radius:12px;background:var(--surface);box-shadow:var(--shadow-card);margin-bottom:48px;}
+.strip .f{display:flex;flex-direction:column;}
+.strip .f .l{font-size:12px;color:var(--ink-muted);}
+.strip .f .v{font-size:15px;font-weight:600;color:var(--ink);}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;line-height:16px;padding:4px 12px;border-radius:9999px;background:var(--brand-tint-strong);color:var(--brand-text);border:1px solid var(--brand-border);}
+.strip .badge{margin-left:auto;}
+
+/* ---------- KPI cards ---------- */
+.kgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
+.kc{border:1px solid var(--border-subtle);border-radius:12px;padding:20px 22px;background:var(--surface);box-shadow:var(--shadow-card);}
+.kc .v{font-family:'Sora',system-ui,sans-serif;font-size:26px;font-weight:700;color:var(--ink);letter-spacing:-.5px;line-height:1;font-variant-numeric:tabular-nums;}
+.kc .k{font-size:14px;color:var(--ink);font-weight:600;margin-top:12px;}
+.kc .d{font-size:12px;color:var(--ink-muted);margin-top:2px;}
+.kc.hl{border-color:var(--brand-border);background:linear-gradient(var(--brand-tint),var(--brand-tint)),var(--surface);box-shadow:var(--glow-brand);}
+.kc.hl .v{color:var(--brand-text);}
+
+/* ---------- LOB split ---------- */
+.split{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:16px;}
+.panel{border:1px solid var(--border-subtle);border-radius:12px;padding:24px;background:var(--surface);box-shadow:var(--shadow-card);}
+.panel .pt{font-size:12px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px;}
+.donut-wrap{display:flex;flex-direction:column;align-items:center;}
+.donut{position:relative;width:180px;height:180px;}
+.donut .track{stroke:var(--surface-raised);}
+.donut .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.donut .center .n{font-family:'Sora',system-ui,sans-serif;font-size:36px;font-weight:700;color:var(--ink);letter-spacing:-.8px;line-height:1;}
+.donut .center .l{font-size:12px;color:var(--ink-muted);margin-top:4px;}
+.legend{width:100%;margin-top:22px;display:flex;flex-direction:column;gap:10px;}
+.legend .li{display:flex;align-items:center;gap:10px;font-size:14px;}
+.legend .li .sw{width:10px;height:10px;border-radius:3px;}
+.legend .li .nm{color:var(--ink-soft);}
+.legend .li .vl{margin-left:auto;font-family:'Sora',system-ui,sans-serif;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;}
+.tscroll{overflow-x:auto;}
+.ltable{width:100%;min-width:480px;border-collapse:collapse;}
+.ltable th{font-size:12px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:0 0 12px;border-bottom:1px solid var(--border-subtle);}
+.ltable th.r,.ltable td.r{text-align:right;padding-right:28px;}
+.ltable td{padding:16px 0;border-bottom:1px solid var(--border-subtle);font-size:14px;color:var(--ink-soft);vertical-align:top;}
+.ltable tr:last-child td{border-bottom:none;}
+.ltable .nm{font-family:'Sora',system-ui,sans-serif;font-weight:700;color:var(--ink);font-size:15px;display:flex;align-items:center;gap:10px;}
+.ltable .nm .bd{width:8px;height:8px;border-radius:50%;}
+.ltable .big{font-family:'Sora',system-ui,sans-serif;font-size:20px;font-weight:700;color:var(--ink);letter-spacing:-.3px;font-variant-numeric:tabular-nums;}
+.ltable .sub{font-size:13px;color:var(--ink-muted);line-height:1.5;max-width:280px;}
+.tag{display:inline-block;font-size:12px;font-weight:500;line-height:16px;padding:3px 10px;border-radius:9999px;margin-top:8px;border:1px solid transparent;}
+.tag.blue{background:var(--brand-tint-strong);color:var(--brand-text);border-color:var(--brand-border);}
+.tag.neutral{background:var(--surface-raised);color:var(--ink-soft);border-color:var(--border-subtle);}
+.tag.amber{background:var(--amber-tint);color:var(--amber);}
+
+/* ---------- Funnel ---------- */
+.fpanel{border:1px solid var(--border-subtle);border-radius:12px;padding:28px;background:var(--surface);box-shadow:var(--shadow-card);}
+.fhead{display:flex;justify-content:flex-end;font-size:12px;color:var(--ink-muted);margin-bottom:8px;padding-right:2px;}
+.fstep{display:flex;align-items:center;gap:16px;margin-bottom:12px;}
+.fstep .lab{width:132px;flex-shrink:0;text-align:right;font-size:14px;font-weight:600;color:var(--ink);}
+.fstep .lab small{display:block;font-weight:400;color:var(--ink-muted);font-size:12px;}
+.fbar{flex:1;height:40px;background:var(--surface-raised);border-radius:8px;overflow:hidden;}
+.fbar i{display:flex;align-items:center;height:100%;border-radius:8px;width:0;font-style:normal;font-family:'Sora',system-ui,sans-serif;font-weight:700;font-size:15px;padding-left:14px;white-space:nowrap;transition:width 1.1s cubic-bezier(.2,.7,.2,1);}
+.fbar i.pre{background:var(--brand-tint-strong);box-shadow:inset 0 0 0 1px var(--brand-border);color:var(--ink);}
+.fbar i.cv{background:var(--brand);color:var(--on-brand);}
+.fbar i.cv.end{box-shadow:var(--glow-brand);}
+.fdiv{display:flex;align-items:center;gap:12px;margin:18px 0 16px 148px;font-size:12px;color:var(--ink-muted);}
+.fdiv::after{content:"";flex:1;height:1px;background:var(--border-subtle);}
+.fstep .pct{width:72px;flex-shrink:0;text-align:right;line-height:1.2;}
+.fstep .pct b{display:block;font-family:'Sora',system-ui,sans-serif;font-size:14px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;}
+.fstep .pct span{font-size:11px;color:var(--ink-muted);}
+.fnote{font-size:14px;color:var(--ink-muted);line-height:1.6;margin-top:20px;padding-top:16px;border-top:1px solid var(--border-subtle);}
+.fnote b{color:var(--ink);font-weight:600;}
+
+/* ---------- Recommendations ---------- */
+.plan{border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow-card);}
+.pstep{display:flex;gap:18px;padding:22px 24px;border-top:1px solid var(--border-subtle);}
+.pstep:first-child{border-top:none;}
+.pstep .num{flex-shrink:0;width:36px;height:36px;border-radius:8px;background:var(--brand-tint-strong);color:var(--brand-text);font-family:'Sora',system-ui,sans-serif;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;}
+.pstep .h{font-family:'Sora',system-ui,sans-serif;font-size:16px;font-weight:700;color:var(--ink);line-height:1.5;}
+.pstep .b{font-size:14px;color:var(--ink-soft);line-height:1.6;margin-top:2px;}
+.cad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px;max-width:540px;}
+.cad .c{border:1px solid var(--border-subtle);border-radius:12px;padding:12px 14px;background:var(--surface-raised);}
+.cad .c .w{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);font-weight:600;}
+.cad .c .n{font-family:'Sora',system-ui,sans-serif;font-size:18px;font-weight:700;color:var(--brand-text);margin:4px 0 1px;}
+.cad .c .s{font-size:12px;color:var(--ink-muted);}
+
+.pstep .h .tag{margin:0 0 0 10px;vertical-align:2px;}
+.pstep .m{font-size:13px;color:var(--ink-muted);line-height:1.6;margin-top:6px;}
+.pstep .m b{color:var(--ink);font-weight:600;}
+
+.mfoot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-top:48px;padding-top:20px;border-top:1px solid var(--border-subtle);font-size:12px;color:var(--ink-muted);}
+
+@media (min-width:900px){ .side{max-width:300px;} }
+@media (max-width:900px){
+  .side{border-right:none;border-bottom:1px solid var(--border-subtle);}
+  .side nav{display:none;}
+  .main{padding:32px 16px 48px;}
+  .kgrid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .split{grid-template-columns:minmax(0,1fr);}
+}
+@media (max-width:560px){
+  .kgrid,.cad{grid-template-columns:minmax(0,1fr);}
+  .fstep .lab{width:92px;} .fdiv{margin-left:108px;} .fstep .pct{width:56px;}
+  .strip .badge{margin-left:0;}
+}
+@media print{
+  .g,.g[data-theme],:root[data-theme] .g{
+    --ground:#ffffff; --surface:#ffffff; --surface-raised:#ebf0f9;
+    --border-subtle:#dbe2ec; --ink:#001020; --ink-soft:#334155; --ink-muted:#475569;
+    --brand-text:#0569c4; --brand-tint:rgba(5,123,229,.08); --brand-tint-strong:rgba(5,123,229,.12);
+    --amber:#b45309; --amber-tint:rgba(180,83,9,.10); --s2:#0a3a6b; --s3:#b45309; --s4:#0f8f78; --s5:#64748b;
+    --glow:transparent; --grid:transparent; --shadow-card:none; --glow-brand:none;
+    --logo-light:block; --logo-dark:none;
+  }
+  .g{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .shell{display:block;max-width:none;}
+  .side{max-width:none;flex-direction:row;flex-wrap:wrap;align-items:center;gap:16px 28px;padding:20px 28px;border-right:none;border-bottom:1px solid var(--border-subtle);}
+  .side .logo{margin-bottom:0;} .side nav,.side .foot,.side .rule{display:none;} .side h1{margin:0;}
+  .main{padding:28px;background:none;}
+  .kc,.fpanel,.panel,.plan,.strip,.pstep{break-inside:avoid;}
+  .block{break-inside:avoid;page-break-inside:avoid;}
+  .bhead{break-after:avoid;page-break-after:avoid;}
+}
+
+/* ---------- Theme toggle (shared across reports) ---------- */
+:root[data-theme="light"]{color-scheme:light;} :root[data-theme="dark"]{color-scheme:dark;}
+.theme-toggle{position:fixed;top:16px;right:16px;z-index:1000;width:40px;height:40px;border-radius:9999px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  background:#ffffff;color:#334155;border:1px solid #dbe2ec;box-shadow:0 2px 8px rgba(15,23,42,.12);transition:background .15s,color .15s,border-color .15s;}
+.theme-toggle:hover{color:#057be5;border-color:#94a3b8;}
+.theme-toggle:focus-visible{outline:2px solid #057be5;outline-offset:2px;}
+.theme-toggle svg{width:18px;height:18px;}
+.theme-toggle .i-sun{display:none;}
+:root[data-theme="dark"] .theme-toggle{background:#151a1e;color:#e2e8f0;border-color:#334155;box-shadow:0 2px 10px rgba(0,0,0,.4);}
+:root[data-theme="dark"] .theme-toggle:hover{color:#339fff;border-color:#64748b;}
+:root[data-theme="dark"] .theme-toggle .i-sun{display:block;} :root[data-theme="dark"] .theme-toggle .i-moon{display:none;}
+@media print{ .theme-toggle{display:none !important;} }
+</style>
+</head>
+<body>
+<!--
+  GOAL CLIENT REPORT: Structured Dashboard (v2)
+  Light/dark: opens in the viewer's system theme; the round toggle (top right) switches it and the choice is saved
+  for every GOAL report on the same site. Prints light. Leave data-theme="system" on .g, the theme <script> first in
+  <head>, the .theme-toggle CSS, and the theme-toggle button just before the closing body tag.
+  1. Replace every [Bracketed] field.
+  2. Body figures are a WORKED EXAMPLE. Replace every number with values from scripts/compute_metrics.py.
+  3. Copy rules: ../reference/copy-guidelines.md. Section/field guide: ../reference/content-model.md.
+  4. Colors come from CSS variables only (var(--s1) etc.). Never hard-code a hex in the body.
+  5. Run scripts/finalize_report.py before delivery (inlines both logos, checks the file).
+-->
+<div class="g" data-theme="system">
+<div class="shell" data-screen-label="Dashboard report">
+
+  <aside class="side">
+    <img class="logo on-light" src="../assets/goal-wordmark-black.png" alt="GOAL">
+    <img class="logo on-dark" src="../assets/goal-wordmark-white.png" alt="GOAL">
+    <div class="eb">Performance Review</div>
+    <div class="rule"></div>
+    <h1>[Agency Name]</h1>
+    <div class="who">Prepared for <b>[Contact Name]</b><br>[City, ST]<br>[Campaign] · [Reporting Period]</div>
+    <nav aria-label="Report sections">
+      <a href="#s1"><span class="ix">01</span>Key Metrics</a>
+      <a href="#s2"><span class="ix">02</span>Performance by Line</a>
+      <a href="#s3"><span class="ix">03</span>Conversion Funnel</a>
+      <a href="#sh"><span class="ix">04</span>Performance by Hour</a>
+      <a href="#s4"><span class="ix">05</span>Recommendations</a>
+    </nav>
+    <div class="foot">GOAL Performance Marketing<br>All conversion metrics calculated based on Leads, not Clicks.</div>
+  </aside>
+
+  <main class="main">
+
+    <div class="strip">
+      <div class="f"><span class="l">Reporting period</span><span class="v">[Reporting Period]</span></div>
+      <div class="f"><span class="l">Lines</span><span class="v">Home · Auto · Commercial</span></div>
+      <div class="f"><span class="l">Lead source</span><span class="v">GOAL branded campaigns</span></div>
+      <span class="badge">[Campaign]</span>
+    </div>
+
+    <section class="block" id="s1">
+      <div class="bhead"><span class="ix">01</span><div><h2>Key Metrics</h2><p>[Reporting Period]</p></div></div>
+      <div class="kgrid">
+        <div class="kc"><div class="v">59</div><div class="k">Leads</div><div class="d">Home · Auto · Commercial</div></div>
+        <div class="kc"><div class="v">31%</div><div class="k">Contact Rate</div><div class="d">18 of 59 leads</div></div>
+        <div class="kc"><div class="v">12%</div><div class="k">Quote Rate</div><div class="d">7 of 59 leads</div></div>
+        <div class="kc hl"><div class="v">$334</div><div class="k">CPA</div><div class="d">Cost per policy · 3 bound</div></div>
+        <div class="kc"><div class="v">3</div><div class="k">Policies Bound</div><div class="d">All lines</div></div>
+        <div class="kc"><div class="v">8</div><div class="k">Inbound Calls</div><div class="d">Direct from prospects</div></div>
+      </div>
+    </section>
+
+    <section class="block" id="s2">
+      <div class="bhead"><span class="ix">02</span><div><h2>Performance by Line</h2><p>[Reporting Period]</p></div></div>
+      <div class="split">
+        <div class="panel">
+          <div class="pt">Lead Mix</div>
+          <div class="donut-wrap">
+            <div class="donut">
+              <svg viewBox="0 0 42 42" width="180" height="180" role="img" aria-label="Lead mix: Home 41, Commercial 10, Auto 8">
+                <circle class="track" cx="21" cy="21" r="15.915" fill="none" stroke-width="6"></circle>
+                <circle class="seg" cx="21" cy="21" r="15.915" fill="none" stroke="var(--s1)" stroke-width="6" stroke-dasharray="0 100" data-dash="69.5" transform="rotate(-90 21 21)"></circle>
+                <circle class="seg" cx="21" cy="21" r="15.915" fill="none" stroke="var(--s2)" stroke-width="6" stroke-dasharray="0 100" data-dash="16.9" data-offset="69.5" transform="rotate(-90 21 21)"></circle>
+                <circle class="seg" cx="21" cy="21" r="15.915" fill="none" stroke="var(--s3)" stroke-width="6" stroke-dasharray="0 100" data-dash="13.6" data-offset="86.4" transform="rotate(-90 21 21)"></circle>
+              </svg>
+              <div class="center"><div class="n">59</div><div class="l">leads</div></div>
+            </div>
+            <div class="legend">
+              <div class="li"><span class="sw" style="background:var(--s1)"></span><span class="nm">Home</span><span class="vl">41</span></div>
+              <div class="li"><span class="sw" style="background:var(--s2)"></span><span class="nm">Commercial</span><span class="vl">10</span></div>
+              <div class="li"><span class="sw" style="background:var(--s3)"></span><span class="nm">Auto</span><span class="vl">8</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel tscroll">
+          <table class="ltable">
+            <thead><tr><th>Line</th><th class="r">Leads</th><th class="r">Calls</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="nm"><span class="bd" style="background:var(--s1)"></span>Home</div><span class="tag blue">Primary</span></td>
+                <td class="r"><span class="big">41</span></td>
+                <td class="r"><span class="big">6</span></td>
+                <td><div class="sub">69% of leads; average ad position 2.4. We raised the daily budget from $50 to $95.</div></td>
+              </tr>
+              <tr>
+                <td><div class="nm"><span class="bd" style="background:var(--s2)"></span>Commercial</div><span class="tag neutral">Active</span></td>
+                <td class="r"><span class="big">10</span></td>
+                <td class="r"><span class="big">2</span></td>
+                <td><div class="sub">17% of leads; 2 of 10 quoted.</div></td>
+              </tr>
+              <tr>
+                <td><div class="nm"><span class="bd" style="background:var(--s3)"></span>Auto</div><span class="tag amber">Refining</span></td>
+                <td class="r"><span class="big">8</span></td>
+                <td class="r"><span class="big">0</span></td>
+                <td><div class="sub">14% of leads. We moved budget to the two source types that produced quotes.</div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="s3">
+      <div class="bhead"><span class="ix">03</span><div><h2>Conversion Funnel</h2><p>[Reporting Period]</p></div></div>
+      <div class="fpanel">
+        <div class="fstep"><div class="lab">Your ad shown<small>impressions</small></div><div class="fbar"><i class="pre" data-w="100">1,782</i></div><div class="pct"><b>100%</b></div></div>
+        <div class="fstep"><div class="lab">Clicks<small>to your page</small></div><div class="fbar"><i class="pre" data-w="64">82</i></div><div class="pct"><b>4.6%</b><span>of impressions</span></div></div>
+        <div class="fdiv">Conversion funnel · rates based on Leads</div>
+        <div class="fstep"><div class="lab">Leads<small>submitted</small></div><div class="fbar"><i class="cv" data-w="60">59</i></div><div class="pct"><b>72%</b><span>of clicks</span></div></div>
+        <div class="fstep"><div class="lab">Contacted<small>reached</small></div><div class="fbar"><i class="cv" data-w="46">18</i></div><div class="pct"><b>31%</b><span>of leads</span></div></div>
+        <div class="fstep"><div class="lab">Quotes<small>presented</small></div><div class="fbar"><i class="cv" data-w="35">7</i></div><div class="pct"><b>12%</b><span>of leads</span></div></div>
+        <div class="fstep"><div class="lab">Policies<small>bound</small></div><div class="fbar"><i class="cv end" data-w="25">3</i></div><div class="pct"><b>5.1%</b><span>of leads</span></div></div>
+        <div class="fnote">Contact rate <b>31%</b> (18 of 59 leads). Quote rate <b>12%</b> (7 of 59). Lead to sale <b>5.1%</b> (3 of 59). CPA <b>$334</b>.</div>
+      </div>
+    </section>
+
+    <!-- OPTIONAL: Performance by Hour. Use only when a by-hour export WITH Contacted/Quote/Bound columns is in the folder.
+         Otherwise delete this section and its nav link, and renumber Recommendations to 04 (sidebar and section).
+         Values come from compute_metrics.py run with --to-tz <agent zone>: one .fstep per hourly[] entry in clock order
+         (label; width as data-w with an empty bar; leads in the bold figure; share_of_leads as "N% of leads", or "&lt;1% of leads"
+         when it rounds to 0), one table row per blocks[] entry. Hours are agent local time;
+         [Time Zone] is time_zone.label (e.g. "Central Time"). Never show schedule percentages, bids, or win rate here. -->
+    <section class="block" id="sh" data-section="hourly">
+      <div class="bhead"><span class="ix">04</span><div><h2>Performance by Hour</h2><p>[Reporting Period] · [Time Zone]</p></div></div>
+      <div class="fpanel">
+        <div class="fhead">Leads by hour</div>
+        <div class="fstep"><div class="lab">8 AM</div><div class="fbar"><i class="cv" data-w="50"></i></div><div class="pct"><b>6</b><span>10% of leads</span></div></div>
+        <div class="fstep"><div class="lab">9 AM</div><div class="fbar"><i class="cv" data-w="92"></i></div><div class="pct"><b>11</b><span>19% of leads</span></div></div>
+        <div class="fstep"><div class="lab">10 AM</div><div class="fbar"><i class="cv" data-w="100"></i></div><div class="pct"><b>12</b><span>20% of leads</span></div></div>
+        <div class="fstep"><div class="lab">11 AM</div><div class="fbar"><i class="cv" data-w="75"></i></div><div class="pct"><b>9</b><span>15% of leads</span></div></div>
+        <div class="fstep"><div class="lab">12 PM</div><div class="fbar"><i class="cv" data-w="58"></i></div><div class="pct"><b>7</b><span>12% of leads</span></div></div>
+        <div class="fstep"><div class="lab">1 PM</div><div class="fbar"><i class="cv" data-w="42"></i></div><div class="pct"><b>5</b><span>8% of leads</span></div></div>
+        <div class="fstep"><div class="lab">2 PM</div><div class="fbar"><i class="cv" data-w="33"></i></div><div class="pct"><b>4</b><span>7% of leads</span></div></div>
+        <div class="fstep"><div class="lab">3 PM</div><div class="fbar"><i class="cv" data-w="25"></i></div><div class="pct"><b>3</b><span>5% of leads</span></div></div>
+        <div class="fstep"><div class="lab">4 PM</div><div class="fbar"><i class="cv" data-w="17"></i></div><div class="pct"><b>2</b><span>3% of leads</span></div></div>
+        <div class="fnote">8 AM to 12 PM: <b>38 of 59 leads</b> (64%), contact rate <b>37%</b> (14 of 38). 12 PM to 5 PM: <b>21 leads</b>, contact rate shown for blocks of 30 or more leads.</div>
+      </div>
+      <div class="panel tscroll" style="margin-top:16px;">
+        <table class="ltable">
+          <thead><tr><th>Time block</th><th class="r">Leads</th><th class="r">Calls</th><th class="r">Contacted</th><th>Contact rate</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div class="nm"><span class="bd" style="background:var(--s1)"></span>8 AM to 12 PM</div></td>
+              <td class="r"><span class="big">38</span></td>
+              <td class="r"><span class="big">6</span></td>
+              <td class="r"><span class="big">14</span></td>
+              <td><div class="sub">37% of leads</div></td>
+            </tr>
+            <tr>
+              <td><div class="nm"><span class="bd" style="background:var(--s5)"></span>12 PM to 5 PM</div></td>
+              <td class="r"><span class="big">21</span></td>
+              <td class="r"><span class="big">2</span></td>
+              <td class="r"><span class="big">4</span></td>
+              <td><div class="sub">Under 30 leads</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="block" id="s4" style="margin-bottom:0;">
+      <div class="bhead"><span class="ix">05</span><div><h2>Recommendations</h2></div></div>
+      <div class="plan">
+        <div class="pstep"><div class="num">1</div><div><div class="h">Raise the Home Daily Budget<span class="tag blue">GOAL</span></div><div class="b">We increased the Home daily budget from $50 to $95.</div><div class="m"><b>Metric behind it:</b> Home produced 41 of 59 leads (69%) and hit its budget cap on 22 of 30 days.</div></div></div>
+        <div class="pstep"><div class="num">2</div><div><div class="h">Respond to New Leads Within 5 Minutes<span class="tag neutral">Agency</span></div><div class="b">Make new leads the first task in the queue and send a text after any missed call.</div><div class="m"><b>Metric behind it:</b> contact rate is 31% (18 of 59 leads).</div></div></div>
+        <div class="pstep"><div class="num">3</div><div><div class="h">Work Every Lead Across 30 Days<span class="tag neutral">Agency</span></div><div class="b">Contact frequency by week, across phone, text, and email:</div>
+          <div class="cad"><div class="c"><div class="w">Week 1</div><div class="n">3+/day</div><div class="s">all channels</div></div><div class="c"><div class="w">Week 2</div><div class="n">2+/day</div><div class="s">all channels</div></div><div class="c"><div class="w">Weeks 3&ndash;4</div><div class="n">every 2&ndash;3 days</div><div class="s">all channels</div></div></div>
+          <div class="m"><b>Metric behind it:</b> 41 of 59 leads (69%) have no recorded contact.</div>
+        </div></div>
+        <div class="pstep"><div class="num">4</div><div><div class="h">Update Dispositions in GOAL Weekly<span class="tag neutral">Agency</span></div><div class="b">Quote and bind outcomes in GOAL let us move budget toward the sources and lines that close.</div><div class="m"><b>Metric behind it:</b> 3 policies are recorded for the period.</div></div></div>
+      </div>
+    </section>
+
+    <div class="mfoot"><span>All conversion metrics calculated based on Leads, not Clicks.</span><span>GOAL · [Reporting Period]</span></div>
+
+  </main>
+</div>
+</div>
+<button class="theme-toggle" type="button" onclick="goalToggleTheme()" aria-label="Switch between light and dark mode" title="Switch light/dark mode">
+<svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+<svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+</button>
+
+<script>
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){
+  e.target.querySelectorAll('[data-w]').forEach(b=>{b.style.width=b.dataset.w+'%';});
+  e.target.querySelectorAll('.seg').forEach(s=>{const d=+s.dataset.dash;const o=+(s.dataset.offset||0);
+    s.setAttribute('stroke-dashoffset', -o);
+    s.style.transition='stroke-dasharray 1.1s cubic-bezier(.2,.7,.2,1)';
+    requestAnimationFrame(()=>{ s.setAttribute('stroke-dasharray', d+' '+(100-d)); });});
+  io.unobserve(e.target);}});},{threshold:.25});
+document.querySelectorAll('.fpanel,.split').forEach(el=>io.observe(el));
+/* Print: make sure bars and donut are drawn even if never scrolled into view */
+window.addEventListener('beforeprint',()=>{
+  document.querySelectorAll('[data-w]').forEach(b=>{b.style.transition='none';b.style.width=b.dataset.w+'%';});
+  document.querySelectorAll('.seg').forEach(s=>{const d=+s.dataset.dash;s.style.transition='none';s.setAttribute('stroke-dashoffset',-(+(s.dataset.offset||0)));s.setAttribute('stroke-dasharray',d+' '+(100-d));});
+});
+</script>
+</body>
+</html>

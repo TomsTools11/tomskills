@@ -1,0 +1,29 @@
+# Personal values for skills that use {{PLACEHOLDER}} tokens.
+#
+# 1. Copy this file to config/profile.yaml (git-ignored, never committed).
+# 2. Fill in your values.
+# 3. Run `python3 scripts/build.py`. Personalized copies land in dist/.
+#
+# Leave a value blank to keep the placeholder; the skill will ask for it at run time.
+
+# --- You ---
+USER_NAME:                  # first name the skills address, e.g. Alex
+USER_FULL_NAME:             # e.g. Alex Rivera
+PRIMARY_EMAIL:              # main inbox scanned in Superhuman
+WORK_EMAIL:                 # work address used by Fathom, Slack, and Close
+WORK_HANDLE:                # Slack handle / email prefix, e.g. arivera
+TIMEZONE:                   # IANA zone, e.g. America/Chicago
+BACKUP_AM_NAME:             # teammate who covers your accounts
+
+# --- Notion (IDs are the part after collection:// or the page ID) ---
+NOTION_TASKS_DS:
+NOTION_NOTES_DS:
+NOTION_ACCOUNTS_DS:
+NOTION_CONTACTS_DS:
+NOTION_TASK_TEMPLATE_ID:
+NOTION_NOTE_TEMPLATE_ID:
+NOTION_CALLOUT_ICON:        # notion://custom_emoji/... URL, or an emoji
+
+# --- Slack ---
+SLACK_NEW_CUSTOMERS_CHANNEL_ID:
+SLACK_WORKSPACE:            # e.g. yourteam.slack.com

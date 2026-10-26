@@ -1,0 +1,8 @@
+{
+  "name": "campaign-analyst",
+  "version": "0.5.1",
+  "description": "Diagnose GOAL Platform client campaign performance, generate calibrated bid optimization recommendations, and build client-facing account review reports (Structured Dashboard design with a light/dark mode toggle that defaults to the viewer's system) from GOAL export CSVs.",
+  "author": {
+    "name": "GOAL"
+  }
+}

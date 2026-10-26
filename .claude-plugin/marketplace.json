@@ -1,0 +1,49 @@
+{
+  "name": "tomskills",
+  "owner": {
+    "name": "Tom Panos",
+    "url": "https://github.com/TomsTools11"
+  },
+  "metadata": {
+    "description": "Tom Panos's Claude skills and plugins for insurance performance marketing, GOAL Platform account management, and B2B research.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "campaign-analyst",
+      "source": "./plugins/campaign-analyst",
+      "description": "Diagnose GOAL Platform campaign performance, right-price sources from RightPricing data, and build client-facing account review reports.",
+      "version": "0.5.1",
+      "category": "marketing",
+      "keywords": ["goal", "insurance", "bidding", "campaign-analysis", "reporting"]
+    },
+    {
+      "name": "goal-disposition-import",
+      "source": "./plugins/goal-disposition-import",
+      "description": "Transform raw CRM disposition exports into GOAL-ready CSV files for Conversion Bulk Import.",
+      "version": "0.2.0",
+      "category": "data",
+      "keywords": ["goal", "disposition", "crm", "csv", "import"]
+    },
+    {
+      "name": "research-company",
+      "source": "./",
+      "strict": false,
+      "description": "B2B company research that produces a professionally formatted PDF account report from a company URL.",
+      "version": "1.0.0",
+      "category": "research",
+      "keywords": ["research", "account-profile", "pdf", "sales"],
+      "skills": ["./skills/research-company"]
+    },
+    {
+      "name": "account-ops-notion",
+      "source": "./",
+      "strict": false,
+      "description": "Notion-based account management: the weekday Daily Account Brief and per-account Recent Updates callouts. Personalize with config/profile.yaml.",
+      "version": "1.0.0",
+      "category": "productivity",
+      "keywords": ["notion", "account-management", "daily-brief", "fathom", "superhuman", "close"],
+      "skills": ["./skills/daily-account-brief", "./skills/account-recent-updates"]
+    }
+  ]
+}

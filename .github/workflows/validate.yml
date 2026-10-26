@@ -1,0 +1,47 @@
+name: Validate skills
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate frontmatter, manifests, and placeholders
+        run: python3 scripts/build.py --check
+      - name: Scan for emails and IDs that shouldn't be public
+        run: |
+          if grep -rnEi '[a-z0-9._%+-]+@[a-z0-9.-]+\.(com|net|org|io|co|ai)\b|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|\b[0-9a-f]{32}\b' skills plugins; then
+            echo "::error::Possible personal email or workspace ID found. Replace it with a {{PLACEHOLDER}} (see docs/ADDING_A_SKILL.md)."
+            exit 1
+          fi
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build generic zips
+        run: python3 scripts/build.py
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/skills/*.zip
+            dist/plugins/*.zip
+          generate_release_notes: true

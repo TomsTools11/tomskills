@@ -1,0 +1,11 @@
+# Personal values and build output
+config/profile.yaml
+dist/
+
+# OS / editor / Python
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+.idea/
+.vscode/
